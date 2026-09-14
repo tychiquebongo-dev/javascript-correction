@@ -1,149 +1,64 @@
-```javascript
-// ==========================================
-// STRING MANIPULATION FUNCTIONS
-// ==========================================
+ document.addEventListener("DOMContentLoaded", function () {
+  // 1. Calcul du prix total
+  function updateTotal() {
+    let total = 0;
+    const cards = document.querySelectorAll(".card-body");
 
-// 1. Reverse a String
-function reverseString(str) {
-    return str.split("").reverse().join("");
-}
+    cards.forEach((card) => {
+      const unitPriceText = card.querySelector(".unit-price").textContent;
+      const unitPrice = parseFloat(unitPriceText.replace("$", "").trim());
+      const quantity = parseInt(card.querySelector(".quantity").textContent);
 
-console.log("1. Reverse:", reverseString("Hello"));
+      total += unitPrice * quantity;
+    });
 
+    document.querySelector(".total").textContent = `${total} $`;
+  }
 
-// 2. Count Characters
-function countCharacters(str) {
-    return str.length;
-}
+  // 2. Gestion des boutons sur chaque article
+  const cards = document.querySelectorAll(".card-body");
 
-console.log("2. Characters:", countCharacters("Hello"));
+  cards.forEach((card) => {
+    const btnPlus = card.querySelector(".fa-plus-circle");
+    const btnMinus = card.querySelector(".fa-minus-circle");
+    const btnDelete = card.querySelector(".fa-trash-alt");
+    const btnHeart = card.querySelector(".fa-heart");
+    const quantitySpan = card.querySelector(".quantity");
 
+    // Augmenter la quantité
+    btnPlus.addEventListener("click", function () {
+      let quantity = parseInt(quantitySpan.textContent);
+      quantitySpan.textContent = quantity + 1;
+      updateTotal();
+    });
 
-// 3. Capitalize Words
-function capitalizeWords(sentence) {
-    return sentence
-        .split(" ")
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(" ");
-}
+    // Diminuer la quantité (minimum 0)
+    btnMinus.addEventListener("click", function () {
+      let quantity = parseInt(quantitySpan.textContent);
+      if (quantity > 0) {
+        quantitySpan.textContent = quantity - 1;
+        updateTotal();
+      }
+    });
 
-console.log(
-    "3. Capitalize:",
-    capitalizeWords("hello world javascript")
-);
+    // Supprimer un article
+    btnDelete.addEventListener("click", function () {
+      card.remove();
+      updateTotal();
+    });
 
+    // Aimer un article (bouton cœur)
+    btnHeart.addEventListener("click", function () {
+      btnHeart.classList.toggle("text-danger");
+      // Si la classe text-danger (Bootstrap) n'est pas utilisée, alternez la couleur directement :
+      if (btnHeart.style.color === "red") {
+        btnHeart.style.color = "black";
+      } else {
+        btnHeart.style.color = "red";
+      }
+    });
+  });
 
-// ==========================================
-// ARRAY FUNCTIONS
-// ==========================================
-
-// 4. Find Maximum
-function findMaximum(numbers) {
-    return Math.max(...numbers);
-}
-
-console.log(
-    "4. Maximum:",
-    findMaximum([10, 5, 25, 8, 15])
-);
-
-
-// 5. Find Minimum
-function findMinimum(numbers) {
-    return Math.min(...numbers);
-}
-
-console.log(
-    "5. Minimum:",
-    findMinimum([10, 5, 25, 8, 15])
-);
-
-
-// 6. Sum of Array
-function sumArray(numbers) {
-    return numbers.reduce((sum, number) => sum + number, 0);
-}
-
-console.log(
-    "6. Sum:",
-    sumArray([10, 5, 25, 8, 15])
-);
-
-
-// 7. Filter Array
-function filterArray(numbers, condition) {
-    return numbers.filter(condition);
-}
-
-const numbers = [1, 2, 3, 4, 5, 6, 7, 8];
-
-const evenNumbers = filterArray(
-    numbers,
-    number => number % 2 === 0
-);
-
-console.log("7. Filter:", evenNumbers);
-
-
-// ==========================================
-// MATHEMATICAL FUNCTIONS
-// ==========================================
-
-// 8. Factorial
-function factorial(n) {
-    if (n < 0) {
-        return "Factorial is not defined for negative numbers";
-    }
-
-    let result = 1;
-
-    for (let i = 1; i <= n; i++) {
-        result *= i;
-    }
-
-    return result;
-}
-
-console.log("8. Factorial:", factorial(5));
-
-
-// 9. Prime Number Check
-function isPrime(number) {
-    if (number < 2) {
-        return false;
-    }
-
-    for (let i = 2; i <= Math.sqrt(number); i++) {
-        if (number % i === 0) {
-            return false;
-        }
-    }
-
-    return true;
-}
-
-console.log("9. Is Prime (7):", isPrime(7));
-console.log("9. Is Prime (10):", isPrime(10));
-
-
-// 10. Fibonacci Sequence
-function fibonacci(terms) {
-    const sequence = [];
-
-    let a = 0;
-    let b = 1;
-
-    for (let i = 0; i < terms; i++) {
-        sequence.push(a);
-
-        let next = a + b;
-        a = b;
-        b = next;
-    }
-
-    return sequence;
-}
-
-console.log("10. Fibonacci:", fibonacci(10));
-```
-
+  // Calcul initial au chargement
+  updateTotal();
+});
